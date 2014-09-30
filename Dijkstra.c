@@ -19,6 +19,7 @@ The grading will include mostly code reviewing - write good code.
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 //
 // Local Constants
 //
@@ -38,7 +39,7 @@ static signed int M = cM_min;
 //
 // Local Prototypes
 //
-signed int DijkstraAlgo(unsigned int **uiGraph, unsigned long ulSize, unsigned int uiSrc);
+signed int DijkstraAlgo(unsigned int *uiGraph, unsigned int uiOrder, unsigned int uiSrc);
 
 
 
@@ -103,11 +104,11 @@ int main (void)
             // Escape main diagonal - i.e. connection between vertice and itself - always 0x00
             if (uiCntRow == uiCntCol)
             {
-                Graph[uiCntRow][uiCntCol] = cINFINITE;
+                Graph[uiCntRow*N + uiCntCol] = cINFINITE;
                 continue;
             }
             // Escape already set weights
-            if (0 != Graph[uiCntRow][uiCntCol])
+            if (0 != Graph[uiCntRow*N + uiCntCol])
                 continue;
 
             siTemp = -1;
@@ -122,11 +123,11 @@ int main (void)
                 else if (0 == siTemp)
                 {
                     // Initialize graph with infinite values, when no connection is made
-                    Graph[uiCntRow][uiCntCol] = (unsigned int)cINFINITE;
+                    Graph[uiCntRow*N + uiCntCol] = (unsigned int)cINFINITE;
                 }
                 else
                 {
-                    Graph[uiCntRow][uiCntCol] = (unsigned int)siTemp;
+                    Graph[uiCntRow*N + uiCntCol] = (unsigned int)siTemp;
                 }
             }
         }
@@ -151,7 +152,7 @@ int main (void)
     }
 
     // 3.2. Run Dijkstra Algorithm
-    siResult = DijkstraAlgo(Graph, (unsigned long)(N*N), uiStart);
+    siResult = DijkstraAlgo(Graph, N, uiStart);
 
     // 3.3. Print the output information
     if (siResult > 0)
@@ -165,13 +166,11 @@ int main (void)
 }
 
 
-signed int DijkstraAlgo(unsigned int **uiGraph, unsigned long ulSize, unsigned int uiSrc)
+signed int DijkstraAlgo(unsigned int *uiGraph, unsigned int uiOrder, unsigned int uiSrc)
 {
-    unsigned int uiOrder = ulSize/2;
     unsigned int uiCntr, i, j, uimin, uiMinID;
     unsigned int auiDist[uiOrder];
     unsigned char auiChecked[uiOrder];
-
 
     // Prepare working data
     for (uiCntr=0; uiCntr < uiOrder; uiCntr++)
@@ -206,12 +205,12 @@ signed int DijkstraAlgo(unsigned int **uiGraph, unsigned long ulSize, unsigned i
             // - there is connection between the current node and the observed one
             // - the item has not been processed yet
             // - the total path way is smaller than previously calculated
-            if ( (uiGraph[uiMinID][j]) && (cFALSE == auiChecked[uiMinID]) )
+            if ( (uiGraph[uiMinID*uiOrder + j]) && (cFALSE == auiChecked[uiMinID]) )
             {
                 if ( (cINFINITE == auiDist[uiMinID]) ||
-                     ((auiDist[uiMinID] + uiGraph[uiMinID][j]) < auiDist[j]) )
+                     ((auiDist[uiMinID] + uiGraph[uiMinID*uiOrder + j]) < auiDist[j]) )
                 {
-                    auiDist[j] = auiDist[uiMinID] + uiGraph[uiMinID][j];
+                    auiDist[j] = auiDist[uiMinID] + uiGraph[uiMinID*uiOrder + j];
                 }
             }
         }
