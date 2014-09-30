@@ -48,7 +48,7 @@ int main (void)
     static signed int uiStart = -1, uiEnd = -1;
     static signed int siTemp;
     static signed int siResult;
-    static unsigned int **Graph = NULL;
+    static unsigned int *Graph = NULL;
 
     // 1.1. Ask for input NodesNumber (max sint32_max and min 2)
     while (cN_min == N)
@@ -87,7 +87,7 @@ int main (void)
     }
 
     // 2.1. Inputs are valid, proceed with allocating memory for the graph
-    Graph = (unsigned int**)calloc(N*N, sizeof(signed int));
+    Graph = (unsigned int*)calloc(N*N, sizeof(unsigned int));
     if (NULL == Graph)
     {
         printf("\n\rNo free memory. Closing!\n\r");
